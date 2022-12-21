@@ -1,0 +1,4 @@
+---
+_repo: https://git.ars-virtualis.org/yul/dotconf
+_name: dotfiles
+_src: "{{ _repodir }}/{{ _name }}"

@@ -1,0 +1,82 @@
+---
+- name: Update and Upgrade MacPorts
+  community.general.macports:
+    selfupdate: true
+    upgrade: true
+  become: true
+
+- name: Install ports
+  community.general.macports:
+    name: "{{ pkg }}"
+  vars:
+    pkg:
+    - alacritty
+    - astyle
+    - autoconf
+    - automake
+    - Bear
+    - clang-devel
+    - cloc
+    - cmake
+    - cppcheck
+    - croc
+    - direnv
+    - ffmpeg
+    - FileZilla
+    - gdb
+    - git
+    - glances
+    - glow
+    - gmake
+    - gnutar
+    - go
+    - go-devel
+    - gopls
+    - hadolint
+    - KeePassXC-devel
+    - lazygit
+    - libunrar
+    - lua-language-server
+    - maven3
+    - meld
+    - meson
+    - nasm
+    - ncdu1
+    - ninja
+    - nmap
+    - npm8
+    - openssh
+    - ossp-uuid
+    - pkgconfig
+    - python311
+    - py311-pip
+    - shellcheck
+    - shfmt
+    - tealdeer
+    - tmux
+    - tree
+    - wget
+    - yasm
+    - youtube-dl
+    - zsh
+    - zsh-completions
+    - libtool
+    - gettext
+  become: true
+
+# - name: Update and Upgrade Homebrew
+#   community.general.homebrew:
+#     update_homebrew: true
+#     # upgrade_all: true
+# 
+# - name: Install all packages
+#   community.general.homebrew:
+#     name: "{{ pkg }}"
+#     state: present
+#   vars:
+#     pkg:
+#     - eloston-chromium
+#     - imhex
+#     - mpv
+#     - multipass
+#     - vlc

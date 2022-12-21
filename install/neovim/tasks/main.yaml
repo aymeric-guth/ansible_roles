@@ -1,0 +1,99 @@
+---
+- name: "Install {{ _name }} dependencies"
+  ansible.builtin.apt:
+    pkg:
+      - ninja-build
+      - gettext
+      - libtool
+      - libtool-bin
+      - autoconf
+      - automake
+      - cmake
+      - g++
+      - pkg-config
+      - unzip
+      - curl
+      - doxygen
+    state: present
+    update_cache: true
+  when: "'VM' in group_names"
+  become: true
+
+- name: "Clone {{ _name }} branch {{ _branch }}"
+  ansible.builtin.git:
+    repo: "{{ _repo }}"
+    dest: "{{ _src }}"
+    version: "{{ _branch }}"
+    depth: 1
+    single_branch: true
+  register: git_result
+
+- name: "Stage {{ _name }} .deps"
+  ansible.builtin.file:
+    path: "{{ _src }}/.deps"
+    mode: 0755
+    state: directory
+
+- name: "Build {{ _name }} .deps"
+  ansible.builtin.shell: |
+    cmake -G Ninja \
+    -S ../cmake.deps \
+    -B . \
+    && ninja
+  args:
+    chdir: "{{ _src }}/.deps"
+  changed_when: false
+
+- name: "Stage {{ _name }}"
+  ansible.builtin.file:
+    path: "{{ _build }}"
+    mode: 0755
+    state: directory
+
+- name: "Build {{ _name }}"
+  ansible.builtin.shell: |
+    cmake -G Ninja \
+    -DCMAKE_INSTALL_PREFIX="{{ _prefix }}" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -S .. \
+    -B . \
+    && ninja
+  args:
+    chdir: "{{ _build }}"
+  changed_when: false
+
+- name: "Install {{ _name }}"
+  ansible.builtin.shell: |
+    ninja install
+  args:
+    chdir: "{{ _build }}"
+  changed_when: false
+  become: true
+
+- name: Clean {{ _name }}
+  ansible.builtin.file:
+    path: "{{ _src }}"
+    state: absent
+  when: "'VM' in group_names"
+
+- name: "Clean {{ _name }} .deps"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ _src }}/.deps"
+    - "{{ _build }}"
+  when: "'VM' not in group_names"
+
+- name: Update VAR NEOVIM_FULL
+  ansible.builtin.lineinfile:
+    path: /etc/zsh/zshenv
+    line: "export NEOVIM_FULL=1"
+  when: "'VM' in group_names"
+  become: true
+
+- name: Delete pre-existing {{ _name }} repo
+  ansible.builtin.file:
+    path: "{{ _src }}"
+    state: absent
+  when: "'VM' in group_names"

@@ -1,0 +1,18 @@
+---
+- name: "Clean {{ _name }}"
+  ansible.builtin.apt:
+    autoremove: true
+    clean: true
+    autoclean: true
+    update_cache: true
+  become: true
+
+# docker only
+# - name: apt delete cache
+#   ansible.built.file:
+#     path: /var/lib/{apt,dpkg,cache,log}/
+#     state: absent
+
+# - name: Rebooting...
+#   reboot:
+#     reboot_timeout: 1800

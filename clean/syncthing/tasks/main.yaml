@@ -1,0 +1,13 @@
+---
+- name: "Clean .stversions"
+  # ansible.builtin.shell: |
+  #   echo {{ item }}/.stversions
+  # ansible.builtin.file:
+  #   path: "{{ ansible_env.DEV }}/{{ item }}/.stversions"
+  #   state: absent
+  ansible.builtin.debug:
+    msg: "{{ ansible_env }}"
+  loop:
+    - personal
+    - learning
+    - work

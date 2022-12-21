@@ -1,0 +1,16 @@
+---
+- name: Clone DIFF-SO-FANCY master branch
+  ansible.builtin.git:
+    repo: "{{ _repo }}"
+    dest: "{{ _src }}"
+    version: master
+    depth: 1
+    single_branch: true
+  register: git_result
+
+- name: Update PATH
+  ansible.builtin.lineinfile:
+    path: /etc/zsh/zshenv
+    line: "export PATH=$REPODIR/diff-so-fancy:$PATH"
+  when: "'VM' in group_names"
+  become: true

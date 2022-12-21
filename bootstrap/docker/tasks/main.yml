@@ -1,0 +1,22 @@
+---
+- name: Tear down existing services
+  community.docker.docker_compose:
+    project_src: "{{ _repodir }}/{{ item.repo }}/{{ item.name }}"
+    state: absent
+  loop: "{{ _repos }}"
+  become: true
+
+- name: Run app
+  community.docker.docker_compose:
+    project_src: "{{ _repodir }}/{{ item.repo }}{{ item.name }}"
+    build: true
+  loop: "{{ _repos }}"
+  # loop:
+  #   - {repo: av-external, name: ci}
+  #   - {repo: av-external, name: main}
+  #   - {repo: av-api, name: ''}
+  # retries: 3
+  # delay: 3
+  # register: result
+  # until: result.rc == 0
+  become: true

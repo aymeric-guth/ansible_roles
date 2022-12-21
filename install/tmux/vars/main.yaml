@@ -1,0 +1,5 @@
+---
+_repo: https://github.com/tmux/tmux
+_name: tmux
+_src: "{{ _repodir }}/{{ _name }}"
+_branch: master

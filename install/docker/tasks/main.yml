@@ -1,0 +1,76 @@
+---
+# https://docs.docker.com/engine/install/ubuntu/
+- name: "Uninstall previous {{ _name }}"
+  ansible.builtin.apt:
+    pkg:
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
+    state: absent
+    update_cache: true
+  become: true
+
+- name: "Install {{ _name }} dependencies"
+  ansible.builtin.apt:
+    pkg:
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+    update_cache: true
+  become: true
+
+- name: "Install {{ _name }} PGP - dir"
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    mode: '0755'
+    state: directory
+  become: true
+
+- name: "Download {{ _name }} GPG - key"
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /tmp/docker.gpg
+    mode: '0755'
+
+- name: "Install {{ _name }} GPG - key"
+  ansible.builtin.shell: |
+    gpg --dearmor < /tmp/docker.gpg > /etc/apt/keyrings/docker.gpg
+  become: true
+
+- name: "Install {{ _name }} repo"
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list.d/docker.list
+    line: |
+      deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_facts.distribution_release }} stable
+    owner: root
+    mode: '0644'
+    create: true
+  become: true
+
+- name: "Install {{ _name }}"
+  ansible.builtin.apt:
+    pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+    state: present
+    update_cache: true
+  become: true
+
+- name: "Create {{ _name }} group"
+  ansible.builtin.group:
+    name: docker
+    state: present
+  become: true
+
+- name: "Add {{ ansible_user }} to {{ _name }} group"
+  ansible.builtin.user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: true
+  become: true

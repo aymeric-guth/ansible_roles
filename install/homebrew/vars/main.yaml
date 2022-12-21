@@ -1,0 +1,5 @@
+---
+# env_xdg_config:
+_repo: https://git.ars-virtualis.org/yul/dotconf
+_home: "/home/{{ env_user }}"
+_dest: "{{ env_dotfiles }}"

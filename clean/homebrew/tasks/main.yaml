@@ -1,0 +1,30 @@
+---
+- name: Clean {{ _name }} containers
+  ansible.builtin.shell: |
+    yes | {{ _bin }} container prune
+  changed_when: false
+  become: true
+
+- name: Clean {{ _name }} images
+  ansible.builtin.shell: |
+    yes | {{ _bin }} image prune -a
+  changed_when: false
+  become: true
+
+- name: Clean {{ _name }} networks
+  ansible.builtin.shell: |
+    yes | {{ _bin }} network prune
+  changed_when: false
+  become: true
+
+- name: Clean {{ _name }} volumes
+  ansible.builtin.shell: |
+    yes | {{ _bin }} volume prune
+  changed_when: false
+  become: true
+
+- name: Clean {{ _name }} builder
+  ansible.builtin.shell: |
+    yes | {{ _bin }} builder prune
+  changed_when: false
+  become: true

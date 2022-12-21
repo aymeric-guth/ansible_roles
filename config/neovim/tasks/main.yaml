@@ -1,0 +1,47 @@
+# https://github.com/nvim-treesitter/nvim-treesitter/issues/2533
+# nvim -c "autocmd User PackerComplete quitall" -c "PackerSync"
+# nvim -c "TSInstallSync maintained" -c q
+---
+# - name: Install Packer clone {{ ansible_user }}
+#   ansible.builtin.git:
+#     repo: "https://github.com/wbthomason/packer.nvim"
+#     dest: "/home/{{ ansible_user }}/{{ _xdg_data_shared }}/site/pack/packer/start/packer.nvim"
+#     depth: 1
+#     single_branch: true
+#   register: git_result
+
+- name: Install NEOVIM plugins
+  ansible.builtin.shell: |
+    XDG_CONFIG_HOME=$DOTFILES \
+    {{ _bin }} \
+    --headless \
+    -c \"autocmd User PackerComplete quitall\"
+  changed_when: false
+
+- name: Install NEOVIM tree-sitter parsers
+  ansible.builtin.shell: |
+    XDG_CONFIG_HOME=$DOTFILES \
+    {{ _bin }} \
+    --headless \
+    -c ":TSInstallSync bash c cmake cpp dockerfile json lua make markdown python sql toml vim yaml" \
+    -c ":qa"
+  changed_when: false
+
+- name: Install NEOVIM plugins
+  ansible.builtin.shell: |
+    XDG_CONFIG_HOME=$DOTFILES \
+    {{ _bin }} \
+    --headless \
+    -c \"autocmd User PackerComplete quitall\"
+  changed_when: false
+  become: true
+
+- name: Install NEOVIM tree-sitter parsers
+  ansible.builtin.shell: |
+    XDG_CONFIG_HOME=$DOTFILES \
+    {{ _bin }} \
+    --headless \
+    -c ":TSInstallSync bash c cmake cpp dockerfile json lua make markdown python sql toml vim yaml" \
+    -c ":qa"
+  changed_when: false
+  become: true

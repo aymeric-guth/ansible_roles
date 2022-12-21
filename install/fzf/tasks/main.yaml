@@ -1,0 +1,49 @@
+---
+- name: Install dependencies
+  ansible.builtin.apt:
+    pkg:
+      - ninja-build
+    state: present
+  become: true
+
+- name: Clone FZF master branch
+  ansible.builtin.git:
+    repo: "{{ _repo }}"
+    dest: "{{ _src }}"
+    version: master
+    depth: 1
+    single_branch: true
+  register: git_result
+
+- name: Install FZF
+  ansible.builtin.shell: |
+    ./install \
+    --all \
+    --key-bindings \
+    --completion \
+    --no-update-rc \
+    --no-bash \
+    --no-fish
+  args:
+    chdir: "{{ _src }}"
+  changed_when: false
+
+- name: Update PATH
+  ansible.builtin.lineinfile:
+    path: /etc/zsh/zshenv
+    line: "{{ item }}"
+  loop:
+    - "export PATH=$REPODIR/fzf/bin:$PATH"
+    - "export FZF=1"
+  when: "'VM' in group_names"
+  become: true
+
+- name: Update /etc/zsh/zshrc completion
+  ansible.builtin.lineinfile:
+    path: /etc/zsh/zshrc
+    line: "{{ item }}"
+  loop:
+    - '[ -f "$GITHUB_REPOS/fzf/shell/completion.zsh" ] && source "$GITHUB_REPOS/fzf/shell/completion.zsh"'
+    - '[ -f "$GITHUB_REPOS/fzf/shell/key-bindings.zsh" ] && source "$GITHUB_REPOS/fzf/shell/key-bindings.zsh"'
+  when: "'VM' in group_names"
+  become: true

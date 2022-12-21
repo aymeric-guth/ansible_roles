@@ -1,0 +1,51 @@
+---
+- name: Check for existing key
+  ansible.builtin.file:
+    path: "{{ _keyfile }}"
+    state: absent
+  become: true
+
+- name: Copy LUKS key
+  ansible.builtin.copy:
+    content: "{{ luks_key }}"
+    dest: "{{ _keyfile }}"
+    owner: root
+    mode: '0400'
+  become: true
+
+- name: Create LUKS container (remains unchanged if it already exists)
+  community.crypto.luks_device:
+    device: "/dev/md127"
+    keyfile: "{{ _keyfile }}"
+    state: "closed"
+  become: true
+
+- name: Open LUKS container
+  community.crypto.luks_device:
+    device: "/dev/md127"
+    state: "opened"
+    name: "nas"
+    keyfile: "{{ _keyfile }}"
+  become: true
+
+- name: Delete LUKS key
+  ansible.builtin.file:
+    path: "{{ _keyfile }}"
+    state: absent
+  become: true
+
+- name: Mount LUKS container
+  ansible.posix.mount:
+    src: "{{ _device }}"
+    path: "{{ _dest }}"
+    fstype: ext4
+    opts: defaults
+    state: mounted
+  become: true
+
+- name: Set permissions
+  ansible.builtin.file:
+    dest: "{{ _dest }}"
+    owner: root
+    mode: '0755'
+  become: true

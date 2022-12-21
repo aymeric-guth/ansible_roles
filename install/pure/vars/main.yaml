@@ -1,0 +1,4 @@
+_repo: https://github.com/sindresorhus/pure
+_name: pure
+_src: "{{ _repodir }}/{{ _name }}"
+_branch: main

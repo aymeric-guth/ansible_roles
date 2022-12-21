@@ -1,0 +1,5 @@
+_repodir: "{{ ansible_facts.env.GITHUB_REPOS }}"
+_repos:
+  - {repo: av-external, name: /ci}
+  - {repo: av-external, name: /main}
+  - {repo: av-api, name: ''}

@@ -1,0 +1,58 @@
+---
+- name: Install apt pkgs
+  ansible.builtin.apt:
+    upgrade: true
+    update_cache: true
+  become: true
+
+- name: Install apt pkgs
+  ansible.builtin.apt:
+    pkg:
+      - git
+      - build-essential
+      - gcc
+      - g++
+      - ca-certificates
+      - curl
+      - gnupg
+      - lsb-release
+      - autoconf
+      - automake
+      - bsdmainutils
+      - bsdutils
+      - build-essential
+      - cmake
+      - curl
+      - direnv
+      - glances
+      - iftop
+      - iotop
+      - ncdu
+      - pkg-config
+      - libssl-dev
+      - astyle
+      - shfmt
+      - shellcheck
+      - bear
+      - "clang-{{ _llvm }}"
+      - "clang-tidy-{{ _llvm }}"
+      - "clang-format-{{ _llvm }}"
+      - "clangd-{{ _llvm }}"
+      - sqlite3
+      - sqlite3-tools
+      - libsqlite3-dev
+    state: present
+    update_cache: true
+  become: true
+
+- name: Adds LLVM to PATH
+  ansible.builtin.lineinfile:
+    path: /etc/zsh/zshenv
+    line: "export PATH=/usr/lib/llvm-{{ _llvm }}/bin:$PATH"
+  become: true
+
+- name: Adds LLVM to MANPATH
+  ansible.builtin.lineinfile:
+    path: /etc/zsh/zshenv
+    line: "export MANPATH=/usr/lib/llvm-{{ _llvm }}/share/man:$MANPATH"
+  become: true

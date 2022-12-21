@@ -1,0 +1,13 @@
+---
+- name: Delete pre-existing {{ _name }} xdg
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "/home/{{ ansible_user }}/{{ _xdg_data_shared }}"
+    - "/{{ ansible_become_user }}/{{ _xdg_data_shared }}"
+    - "/home/{{ ansible_user }}/{{ _xdg_data_state }}"
+    - "/{{ ansible_become_user }}/{{ _xdg_data_state }}"
+    - "/home/{{ ansible_user }}/{{ _xdg_cache }}"
+    - "/{{ ansible_become_user }}/{{ _xdg_cache }}"
+  become: true

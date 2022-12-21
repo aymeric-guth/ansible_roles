@@ -1,0 +1,78 @@
+---
+- name: "Install {{ _name }} dependencies"
+  ansible.builtin.apt:
+    pkg:
+      - libutf8proc-dev
+      - libevent-dev
+      - yacc
+      - libncursesw5-dev
+      - libncurses5-dev
+      - build-essential
+      - pkg-config
+      - libutempter-dev
+      - autotools-dev
+      - automake
+    state: present
+    update_cache: true
+  become: true
+  # when: "'VM' in group_names"
+  when: "ansible_os_family == 'Debian'"
+
+- name: "Clone {{ _name }} branch {{ _branch }}"
+  ansible.builtin.git:
+    repo: "{{ _repo }}"
+    dest: "{{ _src }}"
+    version: "{{ _branch }}"
+    depth: 1
+    single_branch: true
+  register: git_result
+
+- name: "{{ _name }} autogen"
+  ansible.builtin.shell: |
+    sh autogen.sh
+  args:
+    chdir: "{{ _src }}"
+  changed_when: false
+
+- name: "{{ _name }} configure"
+  ansible.builtin.shell: |
+    ./configure \
+    --enable-utf8proc \
+    --enable-utempter \
+    --prefix={{ _prefix }}
+  args:
+    chdir: "{{ _src }}"
+  changed_when: false
+
+- name: "Build {{ _name }}"
+  ansible.builtin.shell: |
+    make -j4
+  args:
+    chdir: "{{ _src }}"
+  changed_when: false
+
+- name: "Install {{ _name }}"
+  ansible.builtin.shell: |
+    make install
+  args:
+    chdir: "{{ _src }}"
+  changed_when: false
+  become: true
+
+# - name: "Clean {{ _name }}"
+#   ansible.builtin.shell: |
+#     make clean
+#   args:
+#     chdir: "{{ _src }}"
+#   changed_when: false
+# 
+# - name: "Clean {{ _name }} .deps"
+#   ansible.builtin.file:
+#     path: "{{ _src }}/.deps"
+#     state: absent
+
+- name: "Delete pre-existing {{ _name }} repo"
+  ansible.builtin.file:
+    path: "{{ _src }}"
+    state: absent
+  when: "'VM' in group_names"

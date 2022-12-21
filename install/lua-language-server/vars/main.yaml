@@ -1,0 +1,6 @@
+---
+_repo: https://github.com/sumneko/lua-language-server
+_branch: master
+_name: lua-language-server
+_src: "{{ _repodir }}/{{ _name }}"
+_prefix: "{{ _tooldir }}/{{ _name }}"

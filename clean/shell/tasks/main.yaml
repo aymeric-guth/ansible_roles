@@ -1,0 +1,13 @@
+---
+- name: Clean dotfiles for {{ ansible_user }}
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/{{ item }}"
+    state: absent
+  loop: "{{ _targets }}"
+
+- name: Clean dotfiles for {{ ansible_become_user }}
+  ansible.builtin.file:
+    path: "/{{ ansible_become_user }}/{{ item }}"
+    state: absent
+  loop: "{{ _targets }}"
+  become: true

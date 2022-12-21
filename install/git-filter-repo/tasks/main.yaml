@@ -1,0 +1,16 @@
+---
+- name: Clone GIT-FILTER-REPO master branch
+  ansible.builtin.git:
+    repo: "{{ _repo }}"
+    dest: "{{ _src }}"
+    version: main
+    depth: 1
+    single_branch: true
+  register: git_result
+
+# append-to-path ""
+- name: Update PATH
+  ansible.builtin.lineinfile:
+    path: /etc/zsh/zshenv
+    line: "export PATH=$REPODIR/git-filter-repo:$PATH"
+  become: true

@@ -1,0 +1,2 @@
+---
+_path: "{{ _repodir }}/.cargo/bin:{{ ansible_env.PATH }}"

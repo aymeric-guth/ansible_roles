@@ -1,0 +1,36 @@
+---
+- name: Clone dotfiles repo
+  ansible.builtin.git:
+    repo: "{{ _repo }}"
+    dest: "{{ _src }}"
+    version: "{{ group_names }}"
+    depth: 1
+    single_branch: true
+  become: true
+
+- name: Create env directory
+  ansible.builtin.file:
+    path: "{{ _src }}/env"
+    mode: '0755'
+    state: directory
+  become: true
+
+###
+- name: Update /etc/zsh/zshenv
+  ansible.builtin.lineinfile:
+    path: "/etc/zsh/zshenv"
+    line: "{{ item }}"
+    owner: "{{ ansible_become_user }}"
+  loop:
+    - "export DOTFILES={{ _src }}"
+    - "export PATH=$DOTFILES/bin:$PATH"
+    - "export ZCOMP=1"
+    - "export skip_global_compinit=1"
+  become: true
+
+- name: Copy .env
+  ansible.builtin.copy:
+    src: .env
+    dest: "{{ _src }}/env/.env-mannaz"
+    mode: '0644'
+  become: true

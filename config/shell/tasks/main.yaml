@@ -1,0 +1,27 @@
+---
+- name: Create .zshrc for {{ ansible_user }}
+  ansible.builtin.lineinfile:
+    path: "/home/{{ ansible_user }}/.zshrc"
+    line: "source $DOTFILES/zsh/.zshrc"
+    owner: "{{ ansible_user }}"
+    mode: '0660'
+    create: true
+
+- name: Install zsh plugins for {{ ansible_user }}
+  ansible.builtin.shell: |
+    "{{ ansible_shell_executable }}" -c 'source ~/.zshrc'
+  changed_when: false
+
+- name: Create .zshrc for {{ ansible_become_user }}
+  ansible.builtin.lineinfile:
+    path: "/{{ ansible_become_user }}/.zshrc"
+    line: "source $DOTFILES/zsh/.zshrc"
+    mode: '0660'
+    create: true
+  become: true
+
+- name: Install zsh plugins for {{ ansible_become_user }}
+  ansible.builtin.shell: |
+    "{{ ansible_shell_executable }}" -c 'source ~/.zshrc'
+  changed_when: false
+  become: true

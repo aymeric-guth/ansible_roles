@@ -1,0 +1,18 @@
+---
+- name: Clean {{ _name }} orphaned dependencies
+  ansible.builtin.shell: |
+    port uninstall leaves
+  changed_when: false
+  become: true
+
+- name: Clean {{ _name }} inactive ports
+  ansible.builtin.shell: |
+	  port -f uninstall inactive
+  changed_when: false
+  become: true
+
+- name: Clean {{ _name }} cache
+  ansible.builtin.shell: |
+    port -f clean --all all
+  changed_when: false
+  become: true

@@ -1,0 +1,10 @@
+---
+_targets:
+  - .bashrc
+  - .bash_logout
+  - .zcompdump
+  - .profile
+  - .cache
+  - .fzf.zsh
+  - .wget-hsts
+  - .ansible

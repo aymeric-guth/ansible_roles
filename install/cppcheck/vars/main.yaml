@@ -1,0 +1,6 @@
+---
+_name: cppcheck
+_repo: https://github.com/danmar/cppcheck
+_branch: main
+_src: "{{ _repodir }}/{{ _name }}"
+_build: "{{ _src }}/build"

@@ -1,0 +1,89 @@
+# https://www.rust-lang.org/tools/install
+# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+---
+- name: "Install {{ _name }} dependencies"
+  ansible.builtin.apt:
+    pkg:
+      - libssl-dev
+      - pkg-config
+    state: present
+    update_cache: true
+  when: "'VM' in group_names"
+  become: true
+
+- name: Download RUSTUP
+  ansible.builtin.get_url:
+    url: https://sh.rustup.rs
+    dest: "/tmp/rustup.sh"
+    mode: '0700'
+
+- name: Install RUSTUP
+  ansible.builtin.shell: |
+    "/tmp/rustup.sh" -y --no-modify-path
+  environment:
+    HOME: "{{ _prefix }}"
+  changed_when: false
+
+- name: Update PATH
+  ansible.builtin.lineinfile:
+    path: /etc/zsh/zshenv
+    line: "{{ item }}"
+  loop:
+    - "export PATH={{ _prefix }}/.cargo/bin:$PATH"
+    - "cargo() { HOME={{ _prefix }} {{ _prefix }}/.cargo/bin/cargo $@; }"
+    - "rustup() { HOME={{ _prefix }} {{ _prefix }}/.cargo/bin/rustup $@; }"
+  when: "'VM' in group_names"
+  become: true
+
+- name: Install RUST packages
+  ansible.builtin.shell: |
+    cargo install {{ item }} --locked
+  loop:
+    - ripgrep
+    - fd-find
+    - bat
+    - lsd
+    - tealdeer
+    - tree-sitter-cli
+  changed_when: false
+
+- name: Install RUST packages - LSP
+  ansible.builtin.shell: |
+    cargo install {{ item.pkg }} --locked {{ item.opts }}
+  loop:
+    - { pkg: 'stylua', opts: '' }
+    - { pkg: 'fre', opts: '' }
+    - { pkg: 'taplo-cli', opts: '--features lsp' }
+    - { pkg: 'languagetool-rust', opts: '--features full' }
+  when: "'workstation' in group_names"
+  changed_when: false
+
+- name: Update VAR FRE
+  ansible.builtin.lineinfile:
+    path: /etc/zsh/zshenv
+    line: "export FRE=1"
+  when: "'VM' in group_names"
+  become: true
+
+- name: "Clone rust-analyzer branch master"
+  ansible.builtin.git:
+    repo: https://github.com/rust-lang/rust-analyzer.git
+    dest: "{{ _repodir }}/rust-analyzer"
+    version: master
+    depth: 1
+    single_branch: true
+  register: git_result
+
+- name: Install cargo component rust-analyzer
+  ansible.builtin.shell: |
+    cargo xtask install --server
+  args:
+    chdir: "{{ _repodir }}/rust-analyzer"
+  when: "'workstation' in group_names"
+  changed_when: false
+
+- name: Install cargo component rustfmt
+  ansible.builtin.shell: |
+    rustup component add rustfmt
+  when: "'workstation' in group_names"
+  changed_when: false

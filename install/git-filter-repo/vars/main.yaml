@@ -1,0 +1,3 @@
+_repo: https://github.com/newren/git-filter-repo
+_name: git-filter-repo
+_src: "{{ _repodir }}/{{ _name }}"

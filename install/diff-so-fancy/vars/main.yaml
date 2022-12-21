@@ -1,0 +1,4 @@
+---
+_repo: https://github.com/so-fancy/diff-so-fancy
+_name: diff-so-fancy
+_src: "{{ _repodir }}/{{ _name }}"

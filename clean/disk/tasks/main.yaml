@@ -1,0 +1,13 @@
+---
+- name: Write unused space with 0
+  ansible.builtin.shell: |
+    dd if=/dev/zero of=/EMPTY
+  ignore_errors: true
+  changed_when: false
+  become: true
+
+- name: Delete created empty file
+  ansible.builtin.file:
+    path: /EMPTY
+    state: absent
+  become: true

@@ -1,0 +1,6 @@
+---
+- name: Update Macports and the ports tree, then upgrade all outdated ports
+  community.general.macports:
+    selfupdate: true
+    upgrade: true
+  when: ansible_os_family == "Darwin"

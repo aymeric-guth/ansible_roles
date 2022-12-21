@@ -1,0 +1,6 @@
+---
+_repo: https://github.com/neovim/neovim
+_branch: master
+_name: neovim
+_src: "{{ _repodir }}/{{ _name }}"
+_build: "{{ _src }}/build"

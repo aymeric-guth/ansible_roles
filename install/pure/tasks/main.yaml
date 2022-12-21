@@ -1,0 +1,9 @@
+---
+# probleme avec la branch main
+- name: Clone PURE main branch
+  ansible.builtin.git:
+    repo: "{{ _repo }}"
+    dest: "{{ _src }}"
+    version: "{{ _branch }}"
+    depth: 1
+  register: git_result

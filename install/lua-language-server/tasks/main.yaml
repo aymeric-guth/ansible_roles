@@ -1,0 +1,81 @@
+---
+- name: "Install {{ _name }} dependencies"
+  ansible.builtin.apt:
+    pkg:
+      - cmake
+      - ninja-build
+    state: present
+    update_cache: true
+  when: "'VM' in group_names"
+  become: true
+
+- name: "Clone {{ _name }} branch {{ _branch }}"
+  ansible.builtin.git:
+    repo: "{{ _repo }}"
+    dest: "{{ _src }}"
+    version: "{{ _branch }}"
+    depth: 1
+    single_branch: true
+    recursive: true
+  register: git_result
+
+# - name: Download "{{ _name }}" submodules
+#   ansible.builtin.shell: |
+#     git submodule update --depth 1 --init --recursive
+#   args:
+#     chdir: "{{ _src }}"
+#   changed_when: false
+
+- name: "Build {{ _name }} 3rd-party"
+  ansible.builtin.shell: |
+    ./compile/install.sh
+  args:
+    chdir: "{{ _src }}/3rd/luamake"
+  environment:
+    SHELL: ""
+  changed_when: false
+
+- name: "Build {{ _name }}"
+  ansible.builtin.shell: |
+    ./3rd/luamake/luamake rebuild
+  args:
+    chdir: "{{ _src }}"
+  changed_when: false
+
+- name: Create ~/.local/bin directory
+  ansible.builtin.file:
+    path: "{{ _prefix }}"
+    mode: '0755'
+    state: directory
+
+- name: "Install {{ _name }}"
+  ansible.builtin.shell: |
+    cp -r {{ _src }}/bin {{ _prefix }}/bin && \
+    cp -r {{ _src }}/locale {{ _prefix }}/locale && \
+    cp -r {{ _src }}/meta {{ _prefix }}/meta && \
+    cp -r {{ _src }}/script {{ _prefix }}/script && \
+    cp {{ _src }}/changelog.md {{ _prefix }}/changelog.md && \
+    cp {{ _src }}/debugger.lua {{ _prefix }}/debugger.lua && \
+    cp {{ _src }}/LICENSE {{ _prefix }}/LICENSE && \
+    cp {{ _src }}/main.lua {{ _prefix }}/main.lua
+  changed_when: false
+
+- name: Update PATH
+  ansible.builtin.lineinfile:
+    path: /etc/zsh/zshenv
+    line: "export PATH={{ _prefix }}/bin:$PATH"
+  when: "'VM' in group_names"
+  become: true
+
+- name: "Clean {{ _name }}"
+  ansible.builtin.file:
+    path: "{{ _src }}"
+    state: absent
+  when: "'VM' in group_names"
+
+- name: "Delete pre-existing {{ _name }} repo"
+  ansible.builtin.file:
+    path: "{{ _src }}"
+    state: absent
+  when: "'VM' in group_names"
+  become: true

@@ -1,0 +1,6 @@
+---
+_name: "nvim"
+_bin: "{{ _prefix }}/bin/{{ _name }}"
+_xdg_data_shared: ".local/share/{{ _name }}"
+_xdg_data_state: ".local/state/{{ _name }}"
+_xdg_cache: ".cache/{{ _name }}"
