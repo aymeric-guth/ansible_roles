@@ -3,7 +3,7 @@
   ansible.builtin.git:
     repo: "{{ _repo }}"
     dest: "{{ _src }}"
-    version: "{{ group_names }}"
+    version: "{{ _branch }}"
     depth: 1
     single_branch: true
   become: true
