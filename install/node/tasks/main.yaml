@@ -1,47 +1,47 @@
 # https://github.com/nodesource/distributions
 ---
-# - name: "Install {{ _name }} dependencies"
-#   ansible.builtin.apt:
-#     pkg:
-#       - curl
-#       - cmake
-#     state: present
-#     update_cache: true
-#   become: true
-#   when: "ansible_os_family == 'Debian'"
+- name: "Install {{ _name }} dependencies"
+  ansible.builtin.apt:
+    pkg:
+      - curl
+      - cmake
+    state: present
+    update_cache: true
+  become: true
+  when: "ansible_os_family == 'Debian'"
 
-# - name: "Install {{ _name }} GPG key"
-#   ansible.builtin.shell:
-#     curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/nodesource.gpg
-#   become: true
-#   when: "ansible_os_family == 'Debian'"
+- name: "Install {{ _name }} GPG key"
+  ansible.builtin.shell:
+    curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor | tee /etc/apt/trusted.gpg.d/nodesource.gpg
+  become: true
+  when: "ansible_os_family == 'Debian'"
 
-# - name: "Set permissions {{ _name }} GPG key"
-#   ansible.builtin.file:
-#     path: /etc/apt/trusted.gpg.d/nodesource.gpg
-#     mode: '0644'
-#   become: true
-#   when: "ansible_os_family == 'Debian'"
+- name: "Set permissions {{ _name }} GPG key"
+  ansible.builtin.file:
+    path: /etc/apt/trusted.gpg.d/nodesource.gpg
+    mode: '0644'
+  become: true
+  when: "ansible_os_family == 'Debian'"
 
-# - name: "Add {{ _name }} 14.x PPA"
-#   ansible.builtin.lineinfile:
-#     path: /etc/apt/sources.list.d/nodesource.list
-#     line: "deb [signed-by=/etc/apt/trusted.gpg.d/nodesource.gpg] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main\ndeb-src [signed-by=/etc/apt/trusted.gpg.d/nodesource.gpg] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main"
-#     owner: root
-#     group: root
-#     mode: '0644'
-#     create: true
-#   become: true
-#   when: "ansible_os_family == 'Debian'"
+- name: "Add {{ _name }} 14.x PPA"
+  ansible.builtin.lineinfile:
+    path: /etc/apt/sources.list.d/nodesource.list
+    line: "deb [signed-by=/etc/apt/trusted.gpg.d/nodesource.gpg] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main\ndeb-src [signed-by=/etc/apt/trusted.gpg.d/nodesource.gpg] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main"
+    owner: root
+    group: root
+    mode: '0644'
+    create: true
+  become: true
+  when: "ansible_os_family == 'Debian'"
 
-# - name: Install {{ _name }}
-#   ansible.builtin.apt:
-#     pkg:
-#       - nodejs
-#     state: present
-#     update_cache: true
-#   become: true
-#   when: "ansible_os_family == 'Debian'"
+- name: Install {{ _name }}
+  ansible.builtin.apt:
+    pkg:
+      - nodejs
+    state: present
+    update_cache: true
+  become: true
+  when: "ansible_os_family == 'Debian'"
 
 # - name: Update NODE
 #   ansible.builtin.shell: |
@@ -80,7 +80,7 @@
 #     npm prune
 #   become: true
 #   changed_when: false
-
+# 
 # - name: Clean {{ _name }} cache
 #   ansible.builtin.shell: |
 #     npm cache clean --force
