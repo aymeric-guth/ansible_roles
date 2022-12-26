@@ -35,7 +35,7 @@
   loop:
     - "export PATH=$REPODIR/fzf/bin:$PATH"
     - "export FZF=1"
-  when: "'VM' in group_names"
+  when: "'VM' in group_names or ansible_os_family == 'Debian'"
   become: true
 
 - name: Update /etc/zsh/zshrc completion
@@ -43,7 +43,7 @@
     path: /etc/zsh/zshrc
     line: "{{ item }}"
   loop:
-    - '[ -f "$GITHUB_REPOS/fzf/shell/completion.zsh" ] && source "$GITHUB_REPOS/fzf/shell/completion.zsh"'
-    - '[ -f "$GITHUB_REPOS/fzf/shell/key-bindings.zsh" ] && source "$GITHUB_REPOS/fzf/shell/key-bindings.zsh"'
-  when: "'VM' in group_names"
+    - '[ -f "$REPODIR/fzf/shell/completion.zsh" ] && source "$REPODIR/fzf/shell/completion.zsh"'
+    - '[ -f "$REPODIR/fzf/shell/key-bindings.zsh" ] && source "$REPODIR/fzf/shell/key-bindings.zsh"'
+  when: "'VM' in group_names or ansible_os_family == 'Debian'"
   become: true

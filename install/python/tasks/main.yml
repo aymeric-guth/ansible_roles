@@ -15,7 +15,7 @@
     state: present
     update_cache: true
   become: true
-  when: ansible_facts['os_family'] == "Debian"
+  when: "ansible_os_family == 'Debian'"
 
 - name: Install {{ _name }} packages
   ansible.builtin.pip:
@@ -40,7 +40,7 @@
     - "PIPX_BIN_DIR=$PIPX_HOME/bin"
     - "PATH=$PIPX_BIN_DIR:$PATH"
     - "IPYTHONDIR=$DOTFILES/ipython"
-  when: "'VM' in group_names"
+  when: "'VM' in group_names or ansible_os_family == 'Debian'"
   become: true
 
 - name: Install {{ _name }} packages
@@ -51,23 +51,24 @@
     pkg:
       - git+https://github.com/aymeric-guth/tmuxp@yul
       - git+https://git.ars-virtualis.org/yul/tmuxp-plugin-loader@master
+      - git+https://github.com/ansible/ansible-lint@main
   when: "'workstation' in group_names"
   become: true
 
-- name: Install {{ _name }} packages
-  ansible.builtin.shell: |
-    set -o pipefail
-    pipx install {{ item }}
-  loop:
-    - pytest
-    - git+https://git.ars-virtualis.org/yul/obsidian-cli@master
-    - black
-    - git+https://github.com/executablebooks/mdformat@master
-    - pyright
-    - git+https://github.com/adrienverge/yamllint@master
-    - cmakelang
-    - git+https://github.com/ansible/ansible-lint@main
-  when: "'workstation' in group_names"
+# - name: Install {{ _name }} packages
+#   ansible.builtin.shell: |
+#     set -o pipefail
+#     pipx install {{ item }}
+#   loop:
+#     - pytest
+#     - git+https://git.ars-virtualis.org/yul/obsidian-cli@master
+#     - black
+#     - git+https://github.com/executablebooks/mdformat@master
+#     - pyright
+#     - git+https://github.com/adrienverge/yamllint@master
+#     - cmakelang
+#     - git+https://github.com/ansible/ansible-lint@main
+#   when: "'workstation' in group_names"
 
 - name: "Install deadsnakes PPA"
   ansible.builtin.shell: |
@@ -75,9 +76,3 @@
     apt-get update
   become: true
   when: "'VM' in group_names"
-
-- name: Clean {{ _name }} cache
-  ansible.builtin.shell: |
-    python3 -m pip cache purge
-  become: true
-  changed_when: false

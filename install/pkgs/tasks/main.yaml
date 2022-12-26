@@ -31,13 +31,13 @@
       - pkg-config
       - libssl-dev
       - astyle
-      - shfmt
-      - shellcheck
+      # - shfmt
+      # - shellcheck
       - bear
-      - "clang-{{ _llvm }}"
-      - "clang-tidy-{{ _llvm }}"
-      - "clang-format-{{ _llvm }}"
-      - "clangd-{{ _llvm }}"
+      # - "clang-{{ _llvm }}"
+      # - "clang-tidy-{{ _llvm }}"
+      # - "clang-format-{{ _llvm }}"
+      # - "clangd-{{ _llvm }}"
       - sqlite3
       - sqlite3-tools
       - libsqlite3-dev
@@ -45,14 +45,14 @@
     update_cache: true
   become: true
 
-- name: Adds LLVM to PATH
-  ansible.builtin.lineinfile:
-    path: /etc/zsh/zshenv
-    line: "export PATH=/usr/lib/llvm-{{ _llvm }}/bin:$PATH"
-  become: true
-
-- name: Adds LLVM to MANPATH
-  ansible.builtin.lineinfile:
-    path: /etc/zsh/zshenv
-    line: "export MANPATH=/usr/lib/llvm-{{ _llvm }}/share/man:$MANPATH"
-  become: true
+# - name: Adds LLVM to PATH
+#   ansible.builtin.lineinfile:
+#     path: /etc/zsh/zshenv
+#     line: "export PATH=/usr/lib/llvm-{{ _llvm }}/bin:$PATH"
+#   become: true
+# 
+# - name: Adds LLVM to MANPATH
+#   ansible.builtin.lineinfile:
+#     path: /etc/zsh/zshenv
+#     line: "export MANPATH=/usr/lib/llvm-{{ _llvm }}/share/man:$MANPATH"
+#   become: true

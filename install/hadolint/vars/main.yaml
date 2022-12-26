@@ -1,5 +1,0 @@
----
-_repo: https://github.com/hadolint/hadolint
-_branch: master
-_name: hadolint
-_src: "{{ env_repos }}/{{ _name }}"

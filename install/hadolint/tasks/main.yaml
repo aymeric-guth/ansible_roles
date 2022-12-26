@@ -1,7 +1,0 @@
----
-- name: "Download {{ _name }} binary"
-  ansible.builtin.get_url:
-    url: https://github.com/hadolint/hadolint/releases/download/v2.12.0/hadolint-Linux-x86_64
-    dest: "/usr/local/bin/hadolint"
-    mode: '0755'
-  become: true

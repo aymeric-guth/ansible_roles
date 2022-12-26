@@ -16,7 +16,7 @@
       - doxygen
     state: present
     update_cache: true
-  when: "'VM' in group_names"
+  when: "'VM' in group_names or ansible_os_family == 'Debian'"
   become: true
 
 - name: "Clone {{ _name }} branch {{ _branch }}"
