@@ -9,6 +9,7 @@
       - libboost-dev
     state: present
     update_cache: true
+  when: "ansible_os_family == 'Debian'"
   become: true
 
 - name: "Clone {{ _name }} branch {{ _branch }}"

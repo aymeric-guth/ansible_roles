@@ -4,6 +4,7 @@
     pkg:
       - ninja-build
     state: present
+  when: "'VM' in group_names or ansible_os_family == 'Debian'"
   become: true
 
 - name: Clone FZF master branch

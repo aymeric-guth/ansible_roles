@@ -1,0 +1,13 @@
+---
+- name: Install RUST packages
+  ansible.builtin.shell: |
+    cargo install {{ item }} --locked
+  loop:
+    - ripgrep
+    - fd-find
+    - bat
+    - lsd
+    - tealdeer
+    - tree-sitter-cli
+    - fre
+  changed_when: false

@@ -4,3 +4,4 @@
     selfupdate: true
     upgrade: true
   when: ansible_os_family == "Darwin"
+  become: true

@@ -1,0 +1,16 @@
+---
+- name: Find files
+  ansible.builtin.find:
+    paths: "{{ ansible_facts.env.HOME }}/.local/share/zsh/plugins"
+    file_type: directory
+    recurse: false
+  register: found_files
+
+- name: Update zsh plugins
+  ansible.builtin.git:
+    repo: "{{ item.path }}"
+    depth: 1
+    single_branch: true
+    clone: false
+  with_items: "{{ found_files.files }}"
+  changed_when: false

@@ -1,0 +1,2 @@
+---
+_data: "{{ ansible_facts.env.HOME }}/.local/share/zsh"
