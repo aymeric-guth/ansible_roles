@@ -1,0 +1,5 @@
+---
+- name: Copy histfile
+  ansible.builtin.fetch:
+    dest: "/Users/yul/histfiles/.zsh_history-{{ ansible_host }}"
+    src: "{{ _histfile }}"

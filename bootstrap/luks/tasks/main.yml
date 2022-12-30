@@ -49,3 +49,10 @@
     owner: root
     mode: '0755'
   become: true
+
+- name: Fix /etc/fstab
+  ansible.builtin.lineinfile:
+    path: /etc/fstab
+    line: /dev/mapper/nas /mnt/md0 ext4 defaults 0 0
+    state: absent
+  become: true

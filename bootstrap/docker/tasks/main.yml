@@ -6,17 +6,26 @@
   loop: "{{ _repos }}"
   become: true
 
-- name: Run app
+- name: Start av-external
   community.docker.docker_compose:
-    project_src: "{{ _repodir }}/{{ item.repo }}{{ item.name }}"
+    project_src: "{{ _repodir }}/av-external/{{ item }}"
     build: true
-  loop: "{{ _repos }}"
-  # loop:
-  #   - {repo: av-external, name: ci}
-  #   - {repo: av-external, name: main}
-  #   - {repo: av-api, name: ''}
-  # retries: 3
-  # delay: 3
-  # register: result
-  # until: result.rc == 0
+  loop:
+    - ci
+    - main
+  become: true
+
+- name: Check gitlab is up
+  ansible.builtin.uri:
+    url: https://git.ars-virtualis.org
+  retries: 30
+  delay: 5
+  register: result
+  until: ('status' in result) and (result.status == 200 or result.status == 401)
+  changed_when: false
+
+- name: Start av-api
+  community.docker.docker_compose:
+    project_src: "{{ _repodir }}/av-api"
+    build: true
   become: true

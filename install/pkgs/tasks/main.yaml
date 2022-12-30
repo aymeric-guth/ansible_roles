@@ -31,16 +31,15 @@
       - pkg-config
       - libssl-dev
       - astyle
-      # - shfmt
-      # - shellcheck
       - bear
-      # - "clang-{{ _llvm }}"
-      # - "clang-tidy-{{ _llvm }}"
-      # - "clang-format-{{ _llvm }}"
-      # - "clangd-{{ _llvm }}"
+      - "clang-{{ _llvm }}"
+      - "clang-tidy-{{ _llvm }}"
+      - "clang-format-{{ _llvm }}"
+      - "clangd-{{ _llvm }}"
       - sqlite3
       - sqlite3-tools
       - libsqlite3-dev
+      - uuid
     state: present
     update_cache: true
   become: true

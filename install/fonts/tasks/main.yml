@@ -1,0 +1,18 @@
+---
+- name: Create system font dir
+  ansible.builtin.file:
+    path: "{{ _fontdir }}"
+    state: directory
+  become: true
+
+- name: Decompress fonts
+  ansible.builtin.unarchive:
+    src: fonts.tar.gz
+    dest: "{{ _fontdir }}"
+  become: true
+
+- name: Reset font-cache
+  ansible.builtin.shell: |
+    fc-cache -f -v
+  changed_when: false
+  become: true

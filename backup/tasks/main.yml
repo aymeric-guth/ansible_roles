@@ -1,0 +1,25 @@
+---
+# - name: Copy target
+#   ansible.builtin.copy:
+
+- name: Find files
+  ansible.builtin.find:
+    paths: /Users/yul/personal
+    file_type: directory
+    patterns: '.venv,.stversions,node_modules'
+    recurse: true
+    hidden: true
+  register: found_files
+
+- name: Delete non-essential files
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ found_files.files }}"
+
+- name: Package file
+  community.general.archive:
+    path:
+      - /Users/yul/personal
+    dest: "/tmp/{{ _date }}-personal.tar.bz2"
+    format: bz2
