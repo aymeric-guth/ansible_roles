@@ -2,14 +2,6 @@
 # nvim -c "autocmd User PackerComplete quitall" -c "PackerSync"
 # nvim -c "TSInstallSync maintained" -c q
 ---
-# - name: Install Packer clone {{ ansible_user }}
-#   ansible.builtin.git:
-#     repo: "https://github.com/wbthomason/packer.nvim"
-#     dest: "/home/{{ ansible_user }}/{{ _xdg_data_shared }}/site/pack/packer/start/packer.nvim"
-#     depth: 1
-#     single_branch: true
-#   register: git_result
-
 - name: Install NEOVIM plugins
   ansible.builtin.shell: |
     XDG_CONFIG_HOME=$DOTFILES \
