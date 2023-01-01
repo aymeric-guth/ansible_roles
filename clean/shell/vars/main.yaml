@@ -1,6 +1,10 @@
 ---
 _targets:
   - .bashrc
+  - .bash_history
+  - .profile
+  - .python_history
+  - .viminfo
   - .bash_logout
   - .zcompdump
   - .profile
@@ -8,3 +12,4 @@ _targets:
   - .fzf.zsh
   - .wget-hsts
   - .ansible
+  - .fzf.bash

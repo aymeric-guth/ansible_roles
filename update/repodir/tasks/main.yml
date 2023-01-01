@@ -1,0 +1,24 @@
+---
+- name: Find repos
+  ansible.builtin.find:
+    paths: "{{ _repodir }}"
+    file_type: directory
+    recurse: false
+  register: found_files
+
+- name: Fix permissions
+  ansible.builtin.file:
+    dest: "{{ item.path }}"
+    owner: "{{ ansible_user }}"
+    mode: '0755'
+  with_items: "{{ found_files.files }}"
+  become: true
+
+- name: Update repos
+  ansible.builtin.git:
+    repo: "{{ item.path }}"
+    depth: 1
+    single_branch: true
+    clone: false
+  with_items: "{{ found_files.files }}"
+  changed_when: false

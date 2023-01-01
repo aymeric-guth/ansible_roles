@@ -15,14 +15,14 @@
 
 - name: Create LUKS container (remains unchanged if it already exists)
   community.crypto.luks_device:
-    device: "/dev/md127"
+    device: "/dev/md0"
     keyfile: "{{ _keyfile }}"
     state: "closed"
   become: true
 
 - name: Open LUKS container
   community.crypto.luks_device:
-    device: "/dev/md127"
+    device: "/dev/md0"
     state: "opened"
     name: "nas"
     keyfile: "{{ _keyfile }}"

@@ -1,18 +1,21 @@
 ---
 - name: Tear down existing services
   community.docker.docker_compose:
-    project_src: "{{ _repodir }}/{{ item.repo }}/{{ item.name }}"
+    project_src: "{{ _repodir }}/{{ item }}"
     state: absent
-  loop: "{{ _repos }}"
+  loop:
+    - "av-api"
+    - "av-external/ci"
+    - "av-external/main"
   become: true
 
 - name: Start av-external
   community.docker.docker_compose:
-    project_src: "{{ _repodir }}/av-external/{{ item }}"
+    project_src: "{{ _repodir }}/{{ item }}"
     build: true
   loop:
-    - ci
-    - main
+    - "av-external/ci"
+    - "av-external/main"
   become: true
 
 - name: Check gitlab is up

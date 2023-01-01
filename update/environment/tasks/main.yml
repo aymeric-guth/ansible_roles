@@ -1,0 +1,42 @@
+---
+- name: Update /etc/environment
+  ansible.builtin.lineinfile:
+    path: "/etc/environment"
+    line: "{{ item }}"
+    owner: "{{ ansible_become_user }}"
+  loop:
+    - "TOOLDIR=/opt/toolz"
+    - "REPODIR=/opt/repos"
+    - "skip_global_compinit=1"
+    - "LC_ALL=en_US.UTF-8"
+    - "LC_CTYPE=en_US.UTF-8"
+    - "TZ=Europe/Paris"
+  register: environment_changed
+  become: true
+
+- name: Reboot
+  ansible.builtin.reboot:
+    msg: "Reboot initiated by Ansible for kernel updates"
+    connect_timeout: 5
+    reboot_timeout: 300
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+    test_command: uptime
+  when: environment_changed.changed
+  become: true
+
+- name: Update facts
+  setup:
+
+- name: Update /etc/zsh/zshenv
+  ansible.builtin.lineinfile:
+    path: "/etc/zsh/zshenv"
+    line: "{{ item }}"
+    owner: "{{ ansible_become_user }}"
+  loop:
+    - "export DOTFILES={{ ansible_facts.env.REPODIR }}/av-dotfiles"
+    - "export PATH=$DOTFILES/bin:$PATH"
+    - "export ZCOMP=1"
+    - "export PATH=$TOOLDIR/bin:$PATH"
+    - "export MANPATH=$TOOLDIR/share:$MANPATH"
+  become: true
