@@ -19,13 +19,18 @@
   when: "ansible_os_family == 'Debian'"
   become: true
 
+- name: "Clean previous repo"
+  ansible.builtin.file:
+    path: "{{ _src }}"
+    state: absent
+  become: true
+
 - name: "Clone {{ _name }} branch {{ _branch }}"
   ansible.builtin.git:
     repo: "{{ _repo }}"
     dest: "{{ _src }}"
-    version: "{{ _branch }}"
-    depth: 1
-    single_branch: true
+    version: "05b6dd6e5f543083ebca581506398a8c263a2db6"
+    # version: "{{ _branch }}"
   register: git_result
 
 - name: "Stage {{ _name }} .deps"
