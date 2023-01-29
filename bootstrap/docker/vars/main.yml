@@ -1,4 +1,5 @@
-_repodir: "{{ ansible_facts.env.GITHUB_REPOS }}"
+---
+_repodir: "{{ ansible_facts.env.REPODIR }}"
 _repos:
   - {repo: av-external, name: /ci}
   - {repo: av-external, name: /main}
