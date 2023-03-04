@@ -1,3 +1,3 @@
 _keyfile: /root/luks_key
-_device: /dev/mapper/nas
-_dest: /mnt/md0
+_dev: /dev/sdb
+_name: nas

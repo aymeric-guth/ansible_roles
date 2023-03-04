@@ -15,16 +15,16 @@
 
 - name: Create LUKS container (remains unchanged if it already exists)
   community.crypto.luks_device:
-    device: "/dev/md0"
+    device: "{{ _dev }}"
     keyfile: "{{ _keyfile }}"
     state: "closed"
   become: true
 
 - name: Open LUKS container
   community.crypto.luks_device:
-    device: "/dev/md0"
+    device: "{{ _dev }}"
     state: "opened"
-    name: "nas"
+    name: "{{ _name }}"
     keyfile: "{{ _keyfile }}"
   become: true
 
@@ -36,8 +36,8 @@
 
 - name: Mount LUKS container
   ansible.posix.mount:
-    src: "{{ _device }}"
-    path: "{{ _dest }}"
+    src: "/dev/mapper/{{ _name }}"
+    path: /mnt/md0
     fstype: ext4
     opts: defaults
     state: mounted
@@ -45,7 +45,7 @@
 
 - name: Set permissions
   ansible.builtin.file:
-    dest: "{{ _dest }}"
+    dest: /mnt/md0
     owner: root
     mode: '0755'
   become: true
@@ -53,6 +53,6 @@
 - name: Fix /etc/fstab
   ansible.builtin.lineinfile:
     path: /etc/fstab
-    line: /dev/mapper/nas /mnt/md0 ext4 defaults 0 0
+    line: "/dev/mapper/{{ _name }} /mnt/md0 ext4 defaults 0 0"
     state: absent
   become: true

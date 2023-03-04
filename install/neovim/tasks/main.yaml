@@ -29,8 +29,8 @@
   ansible.builtin.git:
     repo: "{{ _repo }}"
     dest: "{{ _src }}"
-    version: "05b6dd6e5f543083ebca581506398a8c263a2db6"
-    # version: "{{ _branch }}"
+    # version: "05b6dd6e5f543083ebca581506398a8c263a2db6"
+    version: "{{ _branch }}"
   register: git_result
 
 - name: "Stage {{ _name }} .deps"

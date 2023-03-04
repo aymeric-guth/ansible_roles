@@ -15,20 +15,20 @@
     build: true
   loop:
     - "av-external/ci"
-    # - "av-external/main"
+    - "av-external/main"
   become: true
 
-# - name: Check gitlab is up
-#   ansible.builtin.uri:
-#     url: https://git.ars-virtualis.org
-#   retries: 30
-#   delay: 5
-#   register: result
-#   until: ('status' in result) and (result.status == 200 or result.status == 401)
-#   changed_when: false
-# 
-# - name: Start av-api
-#   community.docker.docker_compose:
-#     project_src: "{{ _repodir }}/av-api"
-#     build: true
-#   become: true
+- name: Check gitlab is up
+  ansible.builtin.uri:
+    url: https://git.ars-virtualis.org
+  retries: 30
+  delay: 5
+  register: result
+  until: ('status' in result) and (result.status == 200 or result.status == 401)
+  changed_when: false
+
+- name: Start av-api
+  community.docker.docker_compose:
+    project_src: "{{ _repodir }}/av-api"
+    build: true
+  become: true

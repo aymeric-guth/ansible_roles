@@ -40,3 +40,14 @@
     - "export PATH=$TOOLDIR/bin:$PATH"
     - "export MANPATH=$TOOLDIR/share:$MANPATH"
   become: true
+
+- name: Create dirs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_become_user }}"
+    mode: '0777'
+  loop:
+    - "{{ _repodir }}"
+    - "{{ _tooldir }}"
+  become: true
