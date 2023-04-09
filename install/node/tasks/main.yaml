@@ -26,7 +26,7 @@
 - name: "Add {{ _name }} 14.x PPA"
   ansible.builtin.lineinfile:
     path: /etc/apt/sources.list.d/nodesource.list
-    line: "deb [signed-by=/etc/apt/trusted.gpg.d/nodesource.gpg] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main\ndeb-src [signed-by=/etc/apt/trusted.gpg.d/nodesource.gpg] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main"
+    line: "deb [signed-by=/etc/apt/trusted.gpg.d/nodesource.gpg] https://deb.nodesource.com/node_16.x {{ ansible_distribution_release }} main\ndeb-src [signed-by=/etc/apt/trusted.gpg.d/nodesource.gpg] https://deb.nodesource.com/node_14.x {{ ansible_distribution_release }} main"
     owner: root
     group: root
     mode: '0644'
