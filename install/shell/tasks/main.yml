@@ -22,6 +22,12 @@
     line: "{{ item }}"
     owner: "{{ ansible_become_user }}"
   loop:
+    - "TOOLDIR=/opt/toolz"
+    - "REPODIR=/opt/repos"
+    - "skip_global_compinit=1"
+    - "LC_ALL=en_US.UTF-8"
+    - "LC_CTYPE=en_US.UTF-8"
+    - "TZ=Europe/Paris"
     - "export DOTFILES={{ _src }}"
     - "export PATH=$DOTFILES/bin:$PATH"
     - "export ZCOMP=1"
@@ -33,4 +39,15 @@
     src: .env
     dest: "{{ _src }}/env/.env-mannaz"
     mode: '0644'
+  become: true
+
+- name: Create dirs
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_become_user }}"
+    mode: '0777'
+  loop:
+    - "{{ _repodir }}"
+    - "{{ _tooldir }}"
   become: true

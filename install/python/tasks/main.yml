@@ -1,59 +1,59 @@
-- name: "Install {{ _name }} dependencies"
-  ansible.builtin.apt:
-    pkg:
-      - python3-pip
-      - python3-pip-whl
-      - python3-six
-      - python3-setuptools
-      - python3-venv
-      - python3-build
-      - python3-virtualenv
-      - python3-argcomplete
-      - python3-poetry
-      - python3-ipython
-      - python3-ipdb
-    state: present
-    update_cache: true
-  become: true
-  when: "ansible_os_family == 'Debian'"
+---
+# - name: "Install {{ _name }} dependencies"
+#   ansible.builtin.apt:
+#     pkg:
+#       - python3-pip
+#       # - python3-pip-whl
+#       - python3-six
+#       - python3-setuptools
+#       - python3-venv
+#       # - python3-build
+#       - python3-virtualenv
+#       - python3-argcomplete
+#       # - python3-poetry
+#       - python3-ipython
+#       - python3-ipdb
+#     state: present
+#     update_cache: true
+#   become: true
+#   when: "ansible_os_family == 'Debian'"
 
-- name: Install {{ _name }} packages
-  ansible.builtin.pip:
-    name: "{{ pkg }}"
-    umask: "0022"
-  vars:
-    pkg:
-      - meson
-      - pynvim
-      - pipx
-      - git+https://git.ars-virtualis.org/yul/lsfiles@master
-      - git+https://git.ars-virtualis.org/yul/utils@master
-  become: true
+# - name: Install {{ _name }} packages
+#   ansible.builtin.pip:
+#     name: "{{ pkg }}"
+#     umask: "0022"
+#   vars:
+#     pkg:
+#       - meson
+#       - pynvim
+#       - pipx
+#       - git+https://git.ars-virtualis.org/yul/lsfiles@master
+#       - git+https://git.ars-virtualis.org/yul/utils@master
+#   become: true
 
-# hardcoded PATH, either install globally or find a better way
-- name: Update PATH
-  ansible.builtin.lineinfile:
-    path: /etc/zsh/zshenv
-    line: "export {{ item }}"
-  loop:
-    - "PIPX_HOME={{ _tooldir }}/pipx"
-    - "PIPX_BIN_DIR=$PIPX_HOME/bin"
-    - "PATH=$PIPX_BIN_DIR:$PATH"
-    - "IPYTHONDIR=$DOTFILES/ipython"
-  when: "'VM' in group_names or ansible_os_family == 'Debian'"
-  become: true
+# # hardcoded PATH, either install globally or find a better way
+# - name: Update PATH
+#   ansible.builtin.lineinfile:
+#     path: /etc/zsh/zshenv
+#     line: "export {{ item }}"
+#   loop:
+#     - "PIPX_HOME={{ _tooldir }}/pipx"
+#     - "PIPX_BIN_DIR=$PIPX_HOME/bin"
+#     - "PATH=$PIPX_BIN_DIR:$PATH"
+#     - "IPYTHONDIR=$DOTFILES/ipython"
+#   when: "'VM' in group_names or ansible_os_family == 'Debian'"
+#   become: true
 
-- name: Install {{ _name }} packages
-  ansible.builtin.pip:
-    name: "{{ pkg }}"
-    umask: "0022"
-  vars:
-    pkg:
-      - git+https://github.com/aymeric-guth/tmuxp@yul
-      - git+https://git.ars-virtualis.org/yul/tmuxp-plugin-loader@master
-      - git+https://github.com/ansible/ansible-lint@main
-  when: "'workstation' in group_names"
-  become: true
+# - name: Install {{ _name }} packages
+#   ansible.builtin.pip:
+#     name: "{{ pkg }}"
+#     umask: "0022"
+#   vars:
+#     pkg:
+#       - git+https://github.com/aymeric-guth/tmuxp@yul
+#       - git+https://git.ars-virtualis.org/yul/tmuxp-plugin-loader@master
+#   when: "'workstation' in group_names"
+#   become: true
 
 # - name: Install {{ _name }} packages
 #   ansible.builtin.shell: |
@@ -75,4 +75,3 @@
     add-apt-repository ppa:deadsnakes/ppa -y && \
     apt-get update
   become: true
-  when: "'VM' in group_names"

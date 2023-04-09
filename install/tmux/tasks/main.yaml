@@ -4,7 +4,8 @@
     pkg:
       - libutf8proc-dev
       - libevent-dev
-      - yacc
+      - byacc
+      # - yacc
       - libncursesw5-dev
       - libncurses5-dev
       - build-essential
@@ -16,6 +17,14 @@
     update_cache: true
   become: true
   # when: "'VM' in group_names"
+  when: "ansible_os_family == 'Debian'"
+
+- name: "Install {{ _name }} dependencies"
+  ansible.builtin.apt:
+    pkg:
+      - tmux
+    state: absent
+  become: true
   when: "ansible_os_family == 'Debian'"
 
 - name: "Clone {{ _name }} branch {{ _branch }}"
