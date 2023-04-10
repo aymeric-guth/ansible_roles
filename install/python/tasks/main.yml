@@ -29,7 +29,6 @@
       - pipx
       - git+https://git.ars-virtualis.org/yul/lsfiles@master
       - git+https://git.ars-virtualis.org/yul/utils@master
-      - git+https://git.ars-virtualis.org/yul/utils
       - git+https://github.com/tmux-python/tmuxp
       - git+https://git.ars-virtualis.org/yul/tmuxp-plugin-loader
   when: "'workstation' in group_names"
