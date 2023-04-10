@@ -1,0 +1,80 @@
+---
+- name: Uninstall previous
+  ansible.builtin.apt:
+    pkg:
+      - virtualbox
+    state: absent
+    update_cache: true
+  become: true
+
+- name: "Install GPG - key"
+  ansible.builtin.shell: |
+    wget -q -O- http://download.virtualbox.org/virtualbox/debian/oracle_vbox_2016.asc | apt-key add -
+  changed_when: false
+  become: true
+
+- name: "Install repo"
+  ansible.builtin.shell: |
+    {{ item }}
+  loop:
+    - echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) contrib" | tee /etc/apt/sources.list.d/virtualbox.list
+    - echo "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) contrib" | tee /etc/apt/sources.list.d/virtualbox.list
+  changed_when: false
+  become: true
+
+- name: "Fix permissions"
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/virtualbox.list
+    owner: "{{ ansible_become_user }}"
+    mode: '0644'
+  changed_when: false
+  become: true
+
+# - name: "Install repo"
+#   ansible.builtin.lineinfile:
+#     path: /etc/apt/sources.list.d/virtualbox.list
+#     line: |
+#       {{ item }}
+#     owner: root
+#     mode: '0644'
+#     create: true
+#   loop:
+#     - echo "deb http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) contrib" | tee /etc/apt/sources.list.d/virtualbox.list
+#     - echo "deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $(lsb_release -sc) contrib" | tee /etc/apt/sources.list.d/virtualbox.list
+#   become: true
+
+- name: "Install"
+  ansible.builtin.apt:
+    pkg:
+      - virtualbox
+    state: present
+    update_cache: true
+  become: true
+
+- name: "Add user to group"
+  ansible.builtin.shell: |
+    usermod -G vboxusers -a {{ ansible_user }}
+  changed_when: false
+  become: true
+
+- name: "Create annoying config dir"
+  ansible.builtin.file:
+    path: /etc/vbox
+    owner: "{{ ansible_become_user }}"
+    group: "{{ ansible_become_user }}"
+    mode: '0755'
+    state: directory
+  become: true
+
+- name: "Update annoying config"
+  ansible.builtin.lineinfile:
+    path: /etc/vbox/networks.conf
+    line: |
+      {{ item }}
+    owner: root
+    mode: '0644'
+    create: true
+  loop:
+    - "* 10.0.0.0/8 192.168.0.0/16"
+    - "* 2001::/64"
+  become: true
