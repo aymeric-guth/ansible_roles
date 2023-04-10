@@ -3,11 +3,11 @@
   ansible.builtin.apt:
     pkg:
       - python3-pip
-      # - python3-pip-whl
+      - python3-pip-whl
       - python3-six
       - python3-setuptools
       - python3-venv
-      # - python3-build
+      - python3-build
       - python3-virtualenv
       - python3-argcomplete
       # - python3-poetry
