@@ -12,5 +12,12 @@
   ansible.builtin.lineinfile:
     path: /etc/zsh/zshenv
     line: "export PATH=$REPODIR/diff-so-fancy:$PATH"
-  when: "'VM' in group_names"
+  when: "ansible_os_family == 'Debian'"
+  become: true
+
+- name: Update PATH
+  ansible.builtin.lineinfile:
+    path: /etc/zshenv
+    line: "export PATH=$REPODIR/diff-so-fancy:$PATH"
+  when: "ansible_os_family == 'Darwin'"
   become: true
