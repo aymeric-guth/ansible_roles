@@ -1,0 +1,32 @@
+---
+- name: Check mandatory variables are defined
+  ansible.builtin.assert:
+    that:
+      - syncthing_api_key is defined
+
+# curl -H "X-API-Key: FxyJ74i7J3ouedYpwwWcPSbeqAhHHRPA" localhost:8384/rest/config/folders
+- name: Request shares
+  ansible.builtin.uri:
+    url: "http://localhost:8384/rest/config/folders"
+    method: GET
+    return_content: true
+    headers:
+      X-API-Key: "{{ syncthing_api_key }}"
+  register: this
+  delegate_to: "{{ inventory_hostname }}"
+  # failed_when: "'AWESOME' not in this.content"
+
+- name: Copy associated .stignore
+  ansible.builtin.copy:
+    src: "{{ item.label }}"
+    dest: "{{ item.path }}/.stignore"
+    owner: "{{ ansible_user }}"
+    mode: '0600'
+  loop: "{{ this.content }}"
+  become: true
+
+# - name: Copy associated .stignore
+#   ansible.builtin.debug:
+#     msg:
+#       - "{{ item.label }}"
+#   loop: "{{ this.content }}"
