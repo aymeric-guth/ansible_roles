@@ -8,9 +8,16 @@
     single_branch: true
   register: git_result
 
-# append-to-path ""
 - name: Update PATH
   ansible.builtin.lineinfile:
     path: /etc/zsh/zshenv
     line: "export PATH=$REPODIR/git-filter-repo:$PATH"
+  when: "ansible_os_family == 'Debian'"
+  become: true
+
+- name: Update PATH
+  ansible.builtin.lineinfile:
+    path: /etc/zshenv
+    line: "export PATH=$REPODIR/git-filter-repo:$PATH"
+  when: "ansible_os_family == 'Darwin'"
   become: true
