@@ -8,7 +8,7 @@
       - pkg-config
     state: present
     update_cache: true
-  when: "'VM' in group_names or ansible_os_family == 'Debian'"
+  when: "ansible_os_family == 'Debian'"
   become: true
 
 - name: Download RUSTUP
@@ -26,13 +26,24 @@
 
 - name: Update PATH
   ansible.builtin.lineinfile:
+    path: /etc/zshenv
+    line: "{{ item }}"
+  loop:
+    - "export PATH=$TOOLDIR/.cargo/bin:$PATH"
+    - "cargo() { HOME=$TOOLDIR $TOOLDIR/.cargo/bin/cargo $@; }"
+    - "rustup() { HOME=$TOOLDIR $TOOLDIR/.cargo/bin/rustup $@; }"
+  when: "ansible_os_family == 'Darwin'"
+  become: true
+
+- name: Update PATH
+  ansible.builtin.lineinfile:
     path: /etc/zsh/zshenv
     line: "{{ item }}"
   loop:
-    - "export PATH={{ _prefix }}/.cargo/bin:$PATH"
-    - "cargo() { HOME={{ _prefix }} {{ _prefix }}/.cargo/bin/cargo $@; }"
-    - "rustup() { HOME={{ _prefix }} {{ _prefix }}/.cargo/bin/rustup $@; }"
-  when: "'VM' in group_names or ansible_os_family == 'Debian'"
+    - "export PATH=$REPODIR/.cargo/bin:$PATH"
+    - "cargo() { HOME=$TOOLDIR $TOOLDIR/.cargo/bin/cargo $@; }"
+    - "rustup() { HOME=$TOOLDIR $TOOLDIR/.cargo/bin/rustup $@; }"
+  when: "ansible_os_family == 'Debian'"
   become: true
 
 - name: Install RUST packages
@@ -48,22 +59,18 @@
     - fre
   changed_when: false
 
-# - name: Install RUST packages - LSP
-#   ansible.builtin.shell: |
-#     cargo install {{ item.pkg }} --locked {{ item.opts }}
-#   loop:
-#     - { pkg: 'stylua', opts: '' }
-#     - { pkg: 'fre', opts: '' }
-#     - { pkg: 'taplo-cli', opts: '--features lsp' }
-#     - { pkg: 'languagetool-rust', opts: '--features full' }
-#   when: "'workstation' in group_names"
-#   changed_when: false
+- name: Update VAR FRE
+  ansible.builtin.lineinfile:
+    path: /etc/zshenv
+    line: "export FRE=1"
+  when: "ansible_os_family == 'Darwin'"
+  become: true
 
 - name: Update VAR FRE
   ansible.builtin.lineinfile:
     path: /etc/zsh/zshenv
     line: "export FRE=1"
-  when: "'VM' in group_names or ansible_os_family == 'Debian'"
+  when: "ansible_os_family == 'Debian'"
   become: true
 
 # - name: "Clone rust-analyzer branch master"
