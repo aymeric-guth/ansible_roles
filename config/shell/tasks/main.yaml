@@ -9,7 +9,7 @@
 
 - name: Install zsh plugins for {{ ansible_user }}
   ansible.builtin.shell: |
-    "{{ ansible_shell_executable }}" -c 'source ~/.zshrc'
+    /usr/bin/zsh -c 'source ~/.zshrc'
   changed_when: false
 
 - name: Create .zshrc for {{ ansible_become_user }}
@@ -20,8 +20,9 @@
     create: true
   become: true
 
+# demande une phase de bootstraping si zsh n'est pas installé
 - name: Install zsh plugins for {{ ansible_become_user }}
   ansible.builtin.shell: |
-    "{{ ansible_shell_executable }}" -c 'source ~/.zshrc'
+    /usr/bin/zsh -c 'source ~/.zshrc'
   changed_when: false
   become: true
