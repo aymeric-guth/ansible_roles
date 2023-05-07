@@ -48,9 +48,9 @@
   when: "ansible_os_family == 'Debian'"
   become: true
 
-- name: Install deadsnakes PPA
-  ansible.builtin.shell: |
-    add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt-get update
-  when: "ansible_os_family == 'Debian' and ansible_distribution_major_version < 23"
-  become: true
+# - name: Install deadsnakes PPA
+#   ansible.builtin.shell: |
+#     add-apt-repository ppa:deadsnakes/ppa -y && \
+#     apt-get update
+#   when: "ansible_os_family == 'Debian' and ansible_distribution_major_version < 23"
+#   become: true
