@@ -5,7 +5,7 @@
     state: absent
   loop:
     - "av-api"
-    - "av-external/ci"
+    - "av-external/gitlab"
     - "av-external/main"
   become: true
 
@@ -14,7 +14,7 @@
     project_src: "{{ _repodir }}/{{ item }}"
     build: true
   loop:
-    - "av-external/ci"
+    - "av-external/gitlab"
     - "av-external/main"
   become: true
 
