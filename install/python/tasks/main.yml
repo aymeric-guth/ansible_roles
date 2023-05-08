@@ -20,19 +20,27 @@
 
 - name: Install {{ _name }} packages
   ansible.builtin.pip:
-    name: "{{ pkg }}"
+    name: "{{ item }}"
     umask: "0022"
     extra_args: --break-system-packages
-  vars:
-    pkg:
-      - meson
-      - pynvim
-      - pipx
-      - git+https://git.ars-virtualis.org/yul/lsfiles@master
-      - git+https://git.ars-virtualis.org/yul/utils@master
-      - git+https://github.com/tmux-python/tmuxp
-      - git+https://git.ars-virtualis.org/yul/tmuxp-plugin-loader
-  when: "'workstation' in group_names"
+  loop:
+    - pynvim
+    - pipx
+    - git+https://git.ars-virtualis.org/yul/lsfiles@master
+    - git+https://git.ars-virtualis.org/yul/utils@master
+  when: "ansible_os_family == 'Debian'"
+  become: true
+
+- name: Install {{ _name }} packages
+  ansible.builtin.pip:
+    name: "{{ item }}"
+    umask: "0022"
+  loop:
+    - pynvim
+    - pipx
+    - git+https://git.ars-virtualis.org/yul/lsfiles@master
+    - git+https://git.ars-virtualis.org/yul/utils@master
+  when: "ansible_os_family == 'Darwin'"
   become: true
 
 # hardcoded PATH, either install globally or find a better way
@@ -46,6 +54,26 @@
     - "PATH=$PIPX_BIN_DIR:$PATH"
     - "IPYTHONDIR=$DOTFILES/ipython"
   when: "ansible_os_family == 'Debian'"
+  become: true
+
+# hardcoded PATH, either install globally or find a better way
+- name: Update PATH
+  ansible.builtin.lineinfile:
+    path: /etc/zshenv
+    line: "export {{ item }}"
+  loop:
+    - "PIPX_HOME=$TOOLDIR/pipx"
+    - "PIPX_BIN_DIR=$PIPX_HOME/bin"
+    - "PATH=$PIPX_BIN_DIR:$PATH"
+    - "IPYTHONDIR=$DOTFILES/ipython"
+  when: "ansible_os_family == 'Darwin'"
+  become: true
+
+- name: Install dev packages
+  ansible.builtin.shell: |
+    pipx install git+https://github.com/tmux-python/tmuxp && \
+    pipx inject git+https://git.ars-virtualis.org/yul/tmuxp-plugin-loader
+  changed_when: false
   become: true
 
 # - name: Install deadsnakes PPA
