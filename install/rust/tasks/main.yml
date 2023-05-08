@@ -40,7 +40,7 @@
     path: /etc/zsh/zshenv
     line: "{{ item }}"
   loop:
-    - "export PATH=$REPODIR/.cargo/bin:$PATH"
+    - "export PATH=$TOOLDIR/.cargo/bin:$PATH"
     - "cargo() { HOME=$TOOLDIR $TOOLDIR/.cargo/bin/cargo $@; }"
     - "rustup() { HOME=$TOOLDIR $TOOLDIR/.cargo/bin/rustup $@; }"
   when: "ansible_os_family == 'Debian'"
