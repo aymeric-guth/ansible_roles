@@ -11,22 +11,22 @@
     - "LC_ALL=en_US.UTF-8"
     - "LC_CTYPE=en_US.UTF-8"
     - "TZ=Europe/Paris"
-  register: environment_changed
+  register: environment
   become: true
 
-# - name: Reboot
-#   ansible.builtin.reboot:
-#     msg: "Reboot initiated by Ansible for kernel updates"
-#     connect_timeout: 5
-#     reboot_timeout: 300
-#     pre_reboot_delay: 0
-#     post_reboot_delay: 30
-#     test_command: uptime
-#   when: environment_changed.changed
-#   become: true
-# 
-# - name: Update facts
-#   setup:
+- name: Reboot
+  ansible.builtin.reboot:
+    msg: "Reboot initiated by Ansible for kernel updates"
+    connect_timeout: 5
+    reboot_timeout: 300
+    pre_reboot_delay: 0
+    post_reboot_delay: 30
+    test_command: uptime
+  when: environment.changed
+  become: true
+
+- name: Update facts
+  setup:
 
 - name: Update /etc/zsh/zshenv
   ansible.builtin.lineinfile:
