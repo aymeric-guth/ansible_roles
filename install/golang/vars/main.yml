@@ -1,0 +1,5 @@
+---
+_gopath: /usr/local
+_version: 1.20.4
+_base_url: https://go.dev/dl/go{{ _version }}
+# _base_url: https://go.dev/dl/go{{ _version }}.darwin-amd64.tar.gz

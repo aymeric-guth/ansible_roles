@@ -1,0 +1,41 @@
+---
+- name: Check mandatory variables are defined
+  ansible.builtin.assert:
+    that:
+      - _gopath is defined
+
+- name: Delete previous install
+  ansible.builtin.file:
+    path: "{{ _gopath }}/go"
+    state: absent
+  become: true
+
+- name: Download binary release (Darwin amd64)
+  ansible.builtin.unarchive:
+    src: "{{ _base_url }}.darwin-amd64.tar.gz"
+    dest: "{{ _gopath }}"
+    remote_src: true
+    owner: "{{ ansible_become_user }}"
+    mode: '0755'
+  when: ansible_os_family == "Darwin"
+  become: true
+
+- name: Download binary release (Linux arm6l)
+  ansible.builtin.unarchive:
+    src: "{{ _base_url }}.linux-armv6l.tar.gz"
+    dest: "{{ _gopath }}"
+    remote_src: true
+    owner: "{{ ansible_become_user }}"
+    mode: '0755'
+  when: ansible_architecture == "armv7l" and ansible_os_family == "Debian"
+  become: true
+
+- name: Download binary release (Linux amd64)
+  ansible.builtin.unarchive:
+    src: "{{ _base_url }}.linux-amd64.tar.gz"
+    dest: "{{ _gopath }}"
+    remote_src: true
+    owner: "{{ ansible_become_user }}"
+    mode: '0755'
+  when: ansible_architecture == "x86_64" and ansible_os_family == "Debian"
+  become: true
