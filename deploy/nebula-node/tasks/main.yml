@@ -1,3 +1,4 @@
+# https://nebula.defined.net/docs/guides/using-lighthouse-dns/
 ---
 - name: Check golang is installed
   stat:
