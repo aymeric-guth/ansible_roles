@@ -1,0 +1,9 @@
+---
+- name: Install avahi-daemon
+  ansible.builtin.apt:
+    pkg:
+      - avahi-daemon
+    state: present
+    update_cache: true
+  when: "ansible_os_family == 'Debian'"
+  become: true

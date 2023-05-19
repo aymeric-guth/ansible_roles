@@ -1,0 +1,14 @@
+---
+- name: Copy avahi-daemon.conf
+  ansible.builtin.template:
+    src: avahi-daemon.conf.j2
+    dest: /etc/avahi/avahi-daemon.conf
+    owner: "{{ ansible_become_user }}"
+    mode: '0644'
+  become: true
+
+- name: Restart avahi-daemon
+  ansible.builtin.systemd:
+    state: restarted
+    name: avahi-daemon
+  become: true
