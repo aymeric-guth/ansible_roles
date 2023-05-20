@@ -1,0 +1,104 @@
+# https://nebula.defined.net/docs/guides/using-lighthouse-dns/
+---
+- name: Check golang is installed
+  stat:
+    path: /usr/local/go/bin/go
+  register: result
+
+- name: Handler go not installed
+  ansible.builtin.meta: end_play
+  when: (result.stat.isreg is undefined) or (not result.stat.isreg)
+
+- name: Check mandatory variables are defined
+  ansible.builtin.assert:
+    that:
+      - nebula_crt is defined
+      - nebula_crt is defined
+      - _nebula_dir is defined
+
+- name: Clean previous repo
+  ansible.builtin.file:
+    path: /tmp/nebula
+    state: absent
+  become: true
+
+- name: Fetch nebula repo
+  ansible.builtin.git:
+    repo: https://github.com/slackhq/nebula
+    dest: /tmp/nebula
+    depth: 1
+
+- name: Build nebula executable
+  ansible.builtin.command: make -j
+  args:
+    chdir: /tmp/nebula
+  environment:
+    PATH: "/usr/local/go/bin:{{ ansible_facts.env.PATH }}"
+  register: out
+  changed_when: false
+  failed_when: out.rc != 0
+
+- name: Create nebula_dir
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_become_user }}"
+    mode: '0755'
+  loop:
+    - "{{ _nebula_dir }}"
+    - "{{ _nebula_dir }}/bin"
+  become: true
+
+- name: Install nebula executable
+  ansible.builtin.copy:
+    src: /tmp/nebula/nebula
+    dest: "{{ _nebula_dir }}/bin"
+    remote_src: true
+    owner: "{{ ansible_become_user }}"
+    mode: '0755'
+  register: install
+  become: true
+
+- name: Copy host files
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "{{ _nebula_dir }}/{{ item }}"
+    owner: "{{ ansible_become_user }}"
+    mode: '0600'
+  loop:
+    - host.crt
+    - host.key
+    - config.yaml
+  register: config
+  become: true
+
+- name: Copy CA
+  ansible.builtin.copy:
+    src: ca.crt
+    dest: "{{ _nebula_dir }}/ca.crt"
+    owner: "{{ ansible_become_user }}"
+    mode: '0600'
+  become: true
+
+- name: Copy systemd service
+  ansible.builtin.template:
+    src: nebula.service.j2
+    dest: /etc/systemd/system/nebula.service
+    owner: "{{ ansible_become_user }}"
+    mode: '0644'
+  register: service
+  become: true
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+  when: service.changed
+  become: true
+
+- name: Init systemd service
+  ansible.builtin.systemd:
+    enabled: true
+    state: restarted
+    name: nebula
+  when: install.changed or service.changed or config.changed
+  become: true

@@ -1,0 +1,3 @@
+---
+_nebula_dir: /opt/nebula
+am_lighthouse: "{{ nebula_am_lighthouse | default('false') }}"

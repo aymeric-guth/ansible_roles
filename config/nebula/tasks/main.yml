@@ -1,0 +1,27 @@
+---
+- name: Copy host files (node)
+  ansible.builtin.template:
+    src: "config-node.yaml.j2"
+    dest: "{{ _nebula_dir }}/config.yaml"
+    owner: "{{ ansible_become_user }}"
+    mode: '0600'
+  when: not am_lighthouse | bool
+  register: config_node
+  become: true
+
+- name: Copy host files (lighthouse)
+  ansible.builtin.template:
+    src: "config-lighthouse.yaml.j2"
+    dest: "{{ _nebula_dir }}/config.yaml"
+    owner: "{{ ansible_become_user }}"
+    mode: '0600'
+  when: am_lighthouse | bool
+  register: config_lighthouse
+  become: true
+
+- name: Restart systemd service
+  ansible.builtin.systemd:
+    state: restarted
+    name: nebula
+  when: config_node.changed or config_lighthouse.changed
+  become: true

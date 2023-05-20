@@ -1,0 +1,48 @@
+---
+static_host_map:
+
+lighthouse:
+  am_lighthouse: true
+  interval: 10
+  remote_allow_list:
+    '0.0.0.0/0': true
+
+pki:
+  ca: {{ _nebula_dir}}/ca.crt
+  cert: {{ _nebula_dir}}/host.crt
+  key: {{ _nebula_dir}}/host.key
+
+preferred_ranges: ['192.168.0.0/16']
+
+punchy:
+  punch: true
+  respond: true
+  delay: 10s
+
+listen:
+  host: 0.0.0.0
+  port: 4242
+
+tun:
+  disabled: false
+  dev: nebula
+  drop_local_broadcast: false
+  drop_multicast: false
+  tx_queue: 500
+  mtu: 1300
+
+firewall:
+  outbound:
+    - port: any
+      proto: any
+      host: any
+  
+  inbound:
+    - port: any
+      proto: any
+      host: any
+
+logging:
+  level: info
+  format: text
+  disable_timestamp: false
