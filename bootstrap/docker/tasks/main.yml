@@ -6,14 +6,16 @@
   loop:
     - "av-api"
     - "av-external/gitlab"
+    # - "av-external/gitea"
     - "av-external/main"
   become: true
 
 - name: Start av-external
   community.docker.docker_compose:
     project_src: "{{ _repodir }}/{{ item }}"
-    build: true
+    # build: true
   loop:
+    # - "av-external/gitea"
     - "av-external/gitlab"
     - "av-external/main"
   become: true
