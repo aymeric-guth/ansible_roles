@@ -5,10 +5,12 @@
     dest: /etc/avahi/avahi-daemon.conf
     owner: "{{ ansible_become_user }}"
     mode: '0644'
+  register: config
   become: true
 
-- name: Restart avahi-daemon
+- name: Restart service
   ansible.builtin.systemd:
     state: restarted
     name: avahi-daemon
+  when: config.changed
   become: true

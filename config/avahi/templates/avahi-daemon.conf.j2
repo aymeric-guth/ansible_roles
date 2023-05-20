@@ -4,7 +4,7 @@ domain-name=local
 #browse-domains=0pointer.de, zeroconf.org
 use-ipv4=yes
 use-ipv6=yes
-allow-interfaces=tun0
+allow-interfaces=nebula
 #deny-interfaces=eth1
 #check-response-ttl=no
 #use-iff-running=no
@@ -30,13 +30,13 @@ publish-hinfo=yes
 publish-workstation=yes
 publish-domain=yes
 #publish-dns-servers=192.168.50.1, 192.168.50.2
-publish-resolv-conf-dns-servers=yes
-publish-aaaa-on-ipv4=yes
+publish-resolv-conf-dns-servers=no
+publish-aaaa-on-ipv4=no
 publish-a-on-ipv6=yes
 
 [reflector]
-enable-reflector=yes
-reflect-ipv=yes
+enable-reflector={{ 'yes' if mdns_reflector | default(false) else 'no' }}
+reflect-ipv=no
 
 [rlimits]
 #rlimit-as=

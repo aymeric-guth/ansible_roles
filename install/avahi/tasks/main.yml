@@ -5,5 +5,15 @@
       - avahi-daemon
     state: present
     update_cache: true
+  register: install
   when: "ansible_os_family == 'Debian'"
+  become: true
+
+- name: Init systemd service
+  ansible.builtin.systemd:
+    enabled: true
+    daemon_reload: true
+    state: restarted
+    name: avahi-daemon
+  when: install.changed
   become: true
